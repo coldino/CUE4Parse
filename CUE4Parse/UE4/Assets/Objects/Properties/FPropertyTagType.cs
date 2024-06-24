@@ -92,7 +92,7 @@ namespace CUE4Parse.UE4.Assets.Objects.Properties
                     return null;
             }
         }
-        
+
         public T? GetValue<T>()
         {
             return (T?) GetValue(typeof(T));
@@ -128,7 +128,8 @@ namespace CUE4Parse.UE4.Assets.Objects.Properties
                 "MulticastInlineDelegateProperty" => new MulticastInlineDelegateProperty(Ar, type),
                 "MulticastSparseDelegateProperty" => new MulticastSparseDelegateProperty(Ar, type),
                 "NameProperty" => new NameProperty(Ar, type),
-                "ObjectProperty" => Ar is FLevelSaveRecordArchive ? new AssetObjectProperty(Ar, type) : new ObjectProperty(Ar, type), // ObjectProperty but serialized as string
+                "ObjectProperty" => Ar is FLevelSaveRecordArchive ? new AssetObjectProperty(Ar, type) :  // ObjectProperty but serialized as string
+                    Ar.Game == Versions.EGame.GAME_SoulmaskSave ? new EmbeddedObjectProperty(Ar, type) : new ObjectProperty(Ar, type),
                 "SetProperty" => new SetProperty(Ar, tagData, type),
                 "SoftClassProperty" => new SoftObjectProperty(Ar, type),
                 "SoftObjectProperty" => new SoftObjectProperty(Ar, type),

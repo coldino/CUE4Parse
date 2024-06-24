@@ -392,6 +392,43 @@ public class AssetObjectPropertyConverter : JsonConverter<AssetObjectProperty>
     }
 }
 
+public class EmbeddedObjectPropertyConverter : JsonConverter<EmbeddedObjectProperty>
+{
+    public override void WriteJson(JsonWriter writer, EmbeddedObjectProperty value, JsonSerializer serializer)
+    {
+        writer.WriteStartObject();
+        if (value.ObjectName != null)
+        {
+            writer.WritePropertyName("ObjectName");
+            writer.WriteValue(value.ObjectName);
+        }
+        if (value.ObjectClass != null)
+        {
+            writer.WritePropertyName("ObjectClass");
+            writer.WriteValue(value.ObjectClass);
+        }
+        if (value.Value != null)
+        {
+            writer.WritePropertyName("Properties");
+            writer.WriteStartObject();
+            foreach (var property in value.Value.Properties)
+            {
+                var propName = property.ArrayIndex > 0 ? $"{property.Name.Text}[{property.ArrayIndex}]" : property.Name.Text;
+                writer.WritePropertyName(propName);
+                serializer.Serialize(writer, property.Tag);
+            }
+            writer.WriteEndObject();
+        }
+        writer.WriteEndObject();
+    }
+
+    public override EmbeddedObjectProperty ReadJson(JsonReader reader, Type objectType, EmbeddedObjectProperty existingValue, bool hasExistingValue,
+        JsonSerializer serializer)
+    {
+        throw new NotImplementedException();
+    }
+}
+
 public class BoolPropertyConverter : JsonConverter<BoolProperty>
 {
     public override void WriteJson(JsonWriter writer, BoolProperty value, JsonSerializer serializer)
