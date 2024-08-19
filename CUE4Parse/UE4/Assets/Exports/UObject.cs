@@ -341,7 +341,8 @@ public class UObject : IPropertyHolder
             writer.WriteStartObject();
             foreach (var property in Properties)
             {
-                writer.WritePropertyName(property.Name.Text);
+                var propName = property.ArrayIndex > 0 ? $"{property.Name.Text}[{property.ArrayIndex}]" : property.Name.Text;
+                writer.WritePropertyName(propName);
                 serializer.Serialize(writer, property.Tag);
             }
 
